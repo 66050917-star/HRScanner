@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-API_KEY = os.getenv("FIREBASE_API_KEY", "").strip()
+API_KEY = os.getenv("FIREBASE_API_KEY", "AIzaSyC3YQR_l_Xbw36hVJcOT3cw6i8Pts5_tQ8").strip()
 BASE_URL = "https://identitytoolkit.googleapis.com/v1/accounts"
 
 ERROR_MESSAGES = {
