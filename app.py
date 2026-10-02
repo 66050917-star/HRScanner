@@ -9,6 +9,7 @@ from parser_service import read_upload
 from ai_service import extract_ai, skills_from_jd, get_key
 from scoring_service import score_candidate
 from knowledge import EDU_OPTIONS, NOT_FOUND, CANT_CALC, DISCLAIMER
+from firebase_auth import register_user, login_user
 
 st.set_page_config(page_title="TalentAI Screener", page_icon="🧑‍💼", layout="wide")
 db.init()
