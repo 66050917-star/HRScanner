@@ -6,3 +6,5 @@ pymupdf
 python-docx
 openpyxl
 google-genai
+requests
+python-dotenv
