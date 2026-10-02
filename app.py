@@ -11,6 +11,67 @@ from scoring_service import score_candidate
 from knowledge import EDU_OPTIONS, NOT_FOUND, CANT_CALC, DISCLAIMER
 from firebase_auth import register_user, login_user
 
+import streamlit as st
+from firebase_auth import login_user, register_user # ดึงฟังก์ชันของคุณมาใช้
+
+# 1. สร้างตัวแปรเก็บสถานะใน Session State
+if "logged_in" not in st.session_state:
+    st.session_state["logged_in"] = False
+
+# 2. ถ้ายังไม่ได้ล็อกอิน ให้แสดงหน้า Login
+if not st.session_state["logged_in"]:
+    st.title("🔐 เข้าสู่ระบบ TalentAI Screener")
+    
+    # สร้าง Tab แยกหน้าล็อกอิน กับ หน้าสมัครสมาชิก
+    tab1, tab2 = st.tabs(["🔑 เข้าสู่ระบบ", "📝 สมัครสมาชิก"])
+    
+    # ==========================
+    # ส่วนเข้าสู่ระบบ (Login)
+    # ==========================
+    with tab1:
+        with st.form("login_form"):
+            st.subheader("Login")
+            email = st.text_input("อีเมล")
+            password = st.text_input("รหัสผ่าน", type="password")
+            submit_login = st.form_submit_button("เข้าสู่ระบบ")
+            
+            if submit_login:
+                try:
+                    # เรียกใช้ฟังก์ชัน login_user จากโค้ดของคุณ
+                    user_data = login_user(email, password)
+                    
+                    # หากล็อกอินผ่าน ให้เปลี่ยนสถานะเป็น True
+                    st.session_state["logged_in"] = True
+                    st.session_state["email"] = email
+                    
+                    # รีเฟรชหน้าเว็บเพื่อให้เงื่อนไขผ่านลงไปหาหน้าหลัก
+                    st.rerun() 
+                except RuntimeError as e:
+                    # กรณีล็อกอินผิดพลาด จะแสดง Error สีแดงตามข้อความที่คุณตั้งไว้
+                    st.error(str(e))
+                    
+    # ==========================
+    # ส่วนสมัครสมาชิก (Register)
+    # ==========================
+    with tab2:
+        with st.form("register_form"):
+            st.subheader("Register")
+            new_email = st.text_input("อีเมลใหม่")
+            new_password = st.text_input("รหัสผ่านใหม่ (อย่างน้อย 6 ตัวอักษร)", type="password")
+            submit_register = st.form_submit_button("สมัครสมาชิก")
+            
+            if submit_register:
+                try:
+                    # เรียกใช้ฟังก์ชัน register_user จากโค้ดของคุณ
+                    register_user(new_email, new_password)
+                    st.success("🎉 สมัครสมาชิกสำเร็จ! กรุณาไปที่แท็บ 'เข้าสู่ระบบ' เพื่อล็อกอิน")
+                except RuntimeError as e:
+                    st.error(str(e))
+                    
+    # 🛑 คำสั่งสำคัญที่สุด: เบรกโค้ดไว้ตรงนี้! 
+    # ถ้าสถานะยังไม่ล็อกอิน โค้ดด้านล่างทั้งหมด (หน้าอัปโหลดไฟล์) จะไม่ถูกดึงมาแสดงผล
+    st.stop() 
+
 st.set_page_config(page_title="TalentAI Screener", page_icon="🧑‍💼", layout="wide")
 db.init()
 STATUSES = ["Pending", "Shortlisted", "Interview Scheduled", "Rejected"]
